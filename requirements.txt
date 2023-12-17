@@ -1,0 +1,6 @@
+uvicorn
+fastapi
+google-generativeai
+
+# test
+pytest
