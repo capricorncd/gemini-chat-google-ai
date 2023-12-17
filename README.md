@@ -1,27 +1,25 @@
 # chat-google-gemini
 
-Chat demo developed using Google Gemini AI API
-
-https://ai.google.dev/
+Chat demo developed using Google Gemini AI API. https://ai.google.dev/
 
 ![chat-google-gemini](./ui.png)
 
 ## Setup
 
-### 创建和使用虚拟环境
+### Create and enable virtual environments
 
 ```bash
-# 创建
+# create
 python -m venv .venv
 
-# 启用
+# enable
 # Mac
 source .venv/bin/activate
 # Windows
 .venv\Scripts\activate
 ```
 
-启用成功Terminal显示如下：
+Terminal log
 
 ```
 (.venv) (base) username@PC-name folder-name
@@ -29,7 +27,7 @@ source .venv/bin/activate
 
 #### VS code
 
-创建Json或添加下列配置进`.vscode/settings.json`
+Create or update `.vscode/settings.json`
 
 ```json
 {
@@ -37,27 +35,29 @@ source .venv/bin/activate
 }
 ```
 
-> VS Code虚拟环境启用不成功时，可从菜单栏重新新建terminal
-
-### 安装依赖
+### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 创建`.env`文件
+### Create `.env` file
 
-- 复制`.env.example`文件，并重命名为`.env`
-- 或在根目录下新建`.env`文件
+- copy `.env.example` and rename `.env`
+- or create `.env` file
 
 ```
-# 需要注册的环境变量，key=value的形式
-# 例如：
+# Google api key
 GOOGLE_API_KEY=ai_api_key_xxxxxxx
 ```
 
-### 启动服务
+### Start service
 
 ```bash
 uvicorn main:app --reload
 ```
+
+### Other
+
+https://vuetifyjs.com/
+
