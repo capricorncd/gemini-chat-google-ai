@@ -20,7 +20,7 @@
     return input.replace(/<[^>]+>/g,"")
   }
 
-  async function send(message, onProgress, onError, onFinally) {
+  async function send(data, onProgress, onError, onFinally) {
       try {
         const res = await fetch('/api/stream', {
           method: 'POST',
@@ -28,20 +28,17 @@
             'Content-Type': 'application/json',
             Accept: 'text/event-stream',
           },
-          body: JSON.stringify({ input: message })
+          body: JSON.stringify(data)
         })
 
         const textDecoder = new TextDecoder();
         const reader = res.body.getReader();
 
-        let innerHtml = '';
-
         while (true) {
           const { done, value } = await reader.read();
           if (done) break
           const text = textDecoder.decode(value)
-          innerHtml += text.replace(/\n/g, '<br>');
-          onProgress(innerHtml)
+          onProgress(text)
         }
       } catch (e) {
         onError(e)
@@ -50,12 +47,40 @@
       }
   }
 
+  async function getModelList() {
+    try {
+      const response = await fetch('/api/model-list');
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.error(e)
+      return [DEF_CACHE_DATA.model]
+    }
+  }
+
+  function formatNewline(text) {
+    return text.replace(/\n/g, '<br/>')
+  }
+
+  function scrollLastItemIntoView(el) {
+    el.lastElementChild.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  function parseMarkdown(text) {
+    return text.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>')
+  }
+
   window.utils = {
-    CACHE_KEY: '__gemini_chat__',
+    CACHE_CONFIG_KEY: '__chat_config__',
+    CACHE_HISTORY_KEY: '__chat_history__',
     setCache,
     getCache,
     cloneObject,
     send,
+    getModelList,
     removeHtmlTag,
+    formatNewline,
+    scrollLastItemIntoView,
+    parseMarkdown,
   }
 })();

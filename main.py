@@ -11,7 +11,7 @@ load_env_file()
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
 @app.get('/')
@@ -21,8 +21,7 @@ def get_home():
 
 @app.post('/api/stream')
 def post_api_stream(data: dict):
-    input = data.get('input')
-    return StreamingResponse(run_stream(input), media_type='text/event-stream')
+    return StreamingResponse(run_stream(data), media_type='text/event-stream')
 
 
 @app.get('/api/model-list')

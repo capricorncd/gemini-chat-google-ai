@@ -16,7 +16,7 @@ def test_fn(ci, input):
         ci.close()
 
 
-def run_stream(input) -> Iterator:
+def run_stream(data) -> Iterator:
     ci = CustomIterator()
-    threading.Thread(target=chat_gemini, args=(ci, input)).start()
+    threading.Thread(target=chat_gemini, args=(ci, data)).start()
     return ci
