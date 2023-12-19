@@ -1,6 +1,6 @@
 # chat-google-gemini
 
-Chat demo developed using Google Gemini AI API. https://ai.google.dev/
+Chat demo developed using Google AI Gemini API. https://ai.google.dev/
 
 ![chat-google-gemini](./ui.png)
 
@@ -17,15 +17,13 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows
 .venv\Scripts\activate
-```
 
-Terminal log
-
-```
+# Mac log
 (.venv) (base) username@PC-name folder-name
 ```
 
-#### VS code
+<details>
+<summary>or VSCode settings</summary>
 
 Create or update `.vscode/settings.json`
 
@@ -34,6 +32,7 @@ Create or update `.vscode/settings.json`
   "python.terminal.activateEnvironment": true
 }
 ```
+</details>
 
 ### Install dependencies
 
@@ -43,8 +42,7 @@ pip install -r requirements.txt
 
 ### Create `.env` file
 
-- copy `.env.example` and rename `.env`
-- or create `.env` file
+copy `.env.example` and rename, or create new `.env` file
 
 ```
 # Google api key
@@ -57,7 +55,7 @@ GOOGLE_API_KEY=ai_api_key_xxxxxxx
 uvicorn main:app --reload
 ```
 
-### Other
+## Other
 
 https://vuetifyjs.com/
 
