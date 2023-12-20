@@ -16,7 +16,8 @@ def get_model_list() -> List[str]:
 
 def chat_gemini(ci: CustomIterator, data: dict):
     model = genai.GenerativeModel(data.get('model'))
-    response = model.generate_content(data.get('input'), stream=True)
+    chat = model.start_chat(history=[])
+    response = chat.send_message(data.get('input'), stream=True)
     try:
         for chunk in response:
             ci.add(chunk.text)
