@@ -20,6 +20,16 @@
     .github-logo:hover {
       opacity: 0.9;
     }
+
+    .file-input {
+      cursor: pointer;
+      border: 1px solid rgb(var(--v-theme-success));
+      border-radius: 4px;
+    }
+
+    .file-input:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 
@@ -47,11 +57,19 @@
           <v-select class="pt-2" label="Model" :items="modelList" v-model="model" variant="outlined"
             density="comfortable" hide-details></v-select>
         </v-list-item>
+
         <v-list-item>
           <v-btn variant="flat" @click="reset" block color="blue" size="large">Reset</v-btn>
         </v-list-item>
         <v-list-item>
           <v-btn variant="flat" @click="clearHistory" block color="yellow" size="large">Reset history</v-btn>
+        </v-list-item>
+        <v-list-item title="Image and text inputs" v-show="model === 'gemini-pro-vision'" class="mt-4">
+          <label class="d-flex justify-center align-center flex-column text-success pa-6 mt-4 file-input">
+            <v-icon color="success" icon="mdi-image-area-close" size="x-large"></v-icon>
+            select an image
+            <input type="file" style="display:none" ref="fileInput" accept="image/*" @change="onFileInputChange" />
+          </label>
         </v-list-item>
       </v-navigation-drawer>
 
@@ -74,6 +92,7 @@
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.7/dist/vuetify.min.js"></script>
+  <script src="./static/image-process.umd.js"></script>
   <script src="./static/utils.js"></script>
   <script src="./static/main.js"></script>
 </body>

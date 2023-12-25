@@ -28,7 +28,10 @@
             'Content-Type': 'application/json',
             Accept: 'text/event-stream',
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify({
+            ...data,
+            imgData: data.imgData?.replace(/^data:image\/\w+;base64,/, ''),
+          })
         })
 
         const textDecoder = new TextDecoder();
@@ -63,7 +66,9 @@
   }
 
   function scrollLastItemIntoView(el) {
-    el.lastElementChild.scrollIntoView({ behavior: 'smooth' })
+    setTimeout(() => {
+      el.lastElementChild.scrollIntoView({ behavior: 'smooth' })
+    }, 0)
   }
 
   function parseMarkdown(text) {

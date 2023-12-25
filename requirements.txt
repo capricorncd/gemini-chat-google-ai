@@ -1,6 +1,7 @@
 uvicorn
 fastapi
 google-generativeai
+Pillow
 
 # test
 pytest

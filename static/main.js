@@ -33,6 +33,7 @@
       const message = ref('')
       const chatList = ref(CACHE_HISTORY)
       const listRef = ref(null)
+      const imgData = ref(null)
 
       const { width } = useDisplay()
 
@@ -60,20 +61,24 @@
         utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
       }
 
-      function sendMessage() {
-        const m = utils.removeHtmlTag(message.value.trim())
-        if (!m) return
+      function sendMessage(e) {
+        const input = utils.removeHtmlTag(message.value.trim())
+        if (!input && !imgData.value) return
         message.value = ''
         loading.value = true
 
-        chatList.value.push({ type: TYPES.USER, message: m }, { type: TYPES.BOT, message: 'loading ...'})
-        
+        if (input) chatList.value.push({ type: TYPES.USER, message: input })
+
+        chatList.value.push({ type: TYPES.BOT, message: 'loading ...'})
+        utils.scrollLastItemIntoView(listRef.value.$el)
+
         let isFirstText = true
         const botMessage = chatList.value[chatList.value.length - 1]
 
         utils.send({
-          input: m,
+          input,
           model: model.value,
+          imgData: imgData.value,
         }, (text) => {
           if (isFirstText) {
             botMessage.message = text
@@ -87,8 +92,20 @@
           botMessage.message = `ERROR: ${err}`
         }, () => {
           loading.value = false
+          imgData.value = null
           utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
         })
+      }
+
+      function onFileInputChange(e) {
+        const file = e.target.files[0]
+        if (!file || !file.type.startsWith('image/')) return
+        imageProcess.handleMediaFile(file, { longEdge: 600 }).then((res) => {
+          console.log(res)
+          imgData.value = res.data
+          chatList.value.push({ type: TYPES.USER, message: `<img src="${res.data}" />` })
+          utils.scrollLastItemIntoView(listRef.value.$el)
+        }).catch(console.error)
       }
 
       watch([model], () => {
@@ -116,6 +133,7 @@
         listRef,
         clearHistory,
         isSm,
+        onFileInputChange,
       }
     }
   })
@@ -135,7 +153,7 @@
           <section v-html="message"></section>
         </v-alert>
         <v-alert v-else color="blue-grey" icon="mdi-account-circle-outline">
-          {{message}}
+          <section v-html="message"></section>
         </v-alert>
       </v-list-item>`
   })

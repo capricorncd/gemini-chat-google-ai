@@ -57,5 +57,7 @@ uvicorn main:app --reload
 
 ## Other
 
+https://vuejs.org/
+
 https://vuetifyjs.com/
 
