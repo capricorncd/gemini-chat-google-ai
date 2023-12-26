@@ -42,6 +42,11 @@
         return width.value <= 780
       })
 
+      // send message button
+      const disabled = computed(() => {
+        return (!message.value && !imgData.value) || loading.value
+      })
+
       watch([width], () => {
         if (isSm.value && drawer.value) {
           drawer.value = false
@@ -61,9 +66,9 @@
         utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
       }
 
-      function sendMessage(e) {
-        const input = utils.removeHtmlTag(message.value.trim())
-        if (!input && !imgData.value) return
+      function sendMessage() {
+        if (disabled.value) return
+        const input = utils.removeHtmlTag(message.value?.trim())
         message.value = ''
         loading.value = true
 
@@ -108,6 +113,14 @@
         }).catch(console.error)
       }
 
+      function removeChatItem(index) {
+        const item = chatList.value[index]
+        if (imgData.value && /^<img\s*src="(data:image.+)"/.test(item.message) && RegExp.$1 === imgData.value) {
+          imgData.value = null
+        }
+        chatList.value.splice(index, 1)
+      }
+
       watch([model], () => {
         utils.setCache(utils.CACHE_CONFIG_KEY, { model: model.value })
       })
@@ -134,6 +147,8 @@
         clearHistory,
         isSm,
         onFileInputChange,
+        disabled,
+        removeChatItem,
       }
     }
   })
@@ -148,11 +163,16 @@
         return utils.parseMarkdown(utils.formatNewline(this.item.message))
       }
     },
+    methods: {
+      close() {
+        this.$emit('close')
+      }
+    },
     template: `<v-list-item>
-        <v-alert icon="mdi-google" v-if="isBot">
+        <v-alert icon="mdi-google" v-if="isBot" closable @click:close="close">
           <section v-html="message"></section>
         </v-alert>
-        <v-alert v-else color="blue-grey" icon="mdi-account-circle-outline">
+        <v-alert v-else color="blue-grey" icon="mdi-account-circle-outline" closable @click:close="close">
           <section v-html="message"></section>
         </v-alert>
       </v-list-item>`
