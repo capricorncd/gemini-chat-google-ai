@@ -1,6 +1,6 @@
-# chat-google-gemini
+# gemini-chat-google-ai
 
-<img src="./gemini.svg" width="200" />
+<a href="https://ai.google.dev/" target="_blank" title="GEMINI"><img src="./gemini.svg" width="200" /></a>
 
 Chat demo developed using Google AI Gemini API. https://ai.google.dev/
 
