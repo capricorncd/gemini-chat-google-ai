@@ -73,6 +73,7 @@
 
   function parseMarkdown(text) {
     return text.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*\s/g, '• ')
   }
 
   window.utils = {
