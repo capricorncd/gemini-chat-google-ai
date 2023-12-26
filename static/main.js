@@ -70,8 +70,13 @@
         utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
       }
 
-      function sendMessage() {
+      function sendMessage(e) {
         if (disabled.value) return
+        // Fixed the message was sent when pressing the Enter key to confirm Japanese input
+        if (e.type === 'keydown') {
+          const keyCode = e.keyCode ?? e.which
+          if (keyCode !== 13 || e.shiftKey) return
+        }
         const input = utils.removeHtmlTag(message.value?.trim())
         message.value = ''
         loading.value = true

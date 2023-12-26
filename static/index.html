@@ -90,7 +90,7 @@
         <v-row>
           <v-col cols="12" class="pb-0 pt-10 d-flex align-center">
             <v-text-field v-model="message" placeholder="Message Gemini AI ..." variant="outlined" :disabled="loading"
-              :loading="loading" @keyup.enter="sendMessage" class="ml-4" hide-details clearable></v-text-field>
+              :loading="loading" @keydown.enter="sendMessage" class="ml-4" hide-details clearable></v-text-field>
             <v-btn class="mr-4 ml-2 btn-send" color="blue" size="x-large" variant="flat" @click="sendMessage"
               icon="mdi-arrow-up" :disabled="disabled" title="Send Message" rounded="0"></v-btn>
           </v-col>
