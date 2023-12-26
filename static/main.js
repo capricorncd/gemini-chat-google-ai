@@ -6,8 +6,12 @@
 
   const vuetify = createVuetify()
 
+  const MODEL_VISION = 'gemini-pro-vision'
+
+  const MODEL_TEXT_ONLY = 'gemini-pro'
+
   const DEF_CACHE_DATA = {
-    model: 'gemini-pro',
+    model: MODEL_TEXT_ONLY,
   }
 
   const TYPES = {
@@ -79,6 +83,11 @@
 
         let isFirstText = true
         const botMessage = chatList.value[chatList.value.length - 1]
+
+        // fix: Add an image to use models/gemini-pro-vision, or switch your model to a text model.
+        if (model.value === MODEL_VISION && !imgData.value) {
+          model.value = MODEL_TEXT_ONLY
+        }
 
         utils.send({
           input,
