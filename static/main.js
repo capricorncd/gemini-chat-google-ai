@@ -1,33 +1,31 @@
 (function() {
-  'use strict';
+  'use strict'
 
   const { createApp, ref, watch, onMounted, computed } = Vue
   const { createVuetify, useDisplay } = Vuetify
 
   const vuetify = createVuetify()
 
-  const MODEL_VISION = 'gemini-pro-vision'
-
-  const MODEL_TEXT_ONLY = 'gemini-pro'
-
-  const DEF_CACHE_DATA = {
-    model: MODEL_TEXT_ONLY,
-  }
-
   const TYPES = {
     USER: 'user',
     BOT: 'bot'
   }
 
-  const CACHE_DATA = utils.getCache(utils.CACHE_CONFIG_KEY, utils.cloneObject(DEF_CACHE_DATA))
+  const CACHE_DATA = utils.getCache(utils.CACHE_CONFIG_KEY, utils.cloneObject(utils.DEF_CACHE_DATA))
 
-  const INIT_CHAT_ITEM = {
-    type: TYPES.BOT,
-    message: "How can I help you today?"
+  function generateItem(message, type = TYPES.BOT) {
+    return {
+      id: utils.uuid(),
+      type,
+      message,
+    }
   }
+
+  const INIT_CHAT_ITEM = generateItem("How can I help you today?")
 
   const CACHE_HISTORY = utils.getCache(utils.CACHE_HISTORY_KEY, [INIT_CHAT_ITEM])
 
+  // eslint-disable-next-line vue/one-component-per-file
   const app = createApp({
     setup() {
       const modelList = ref([])
@@ -62,12 +60,12 @@
       })
 
       function reset() {
-        model.value = DEF_CACHE_DATA.model
+        model.value = utils.DEF_CACHE_DATA.model
       }
 
       function clearHistory() {
         chatList.value = [INIT_CHAT_ITEM]
-        utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
+        updateCacheChatList()
       }
 
       function sendMessage(e) {
@@ -81,17 +79,17 @@
         message.value = ''
         loading.value = true
 
-        if (input) chatList.value.push({ type: TYPES.USER, message: input })
+        if (input) chatList.value.push(generateItem(input, TYPES.USER))
 
-        chatList.value.push({ type: TYPES.BOT, message: 'loading ...'})
+        chatList.value.push(generateItem('loading ...'))
         utils.scrollLastItemIntoView(listRef.value.$el)
 
         let isFirstText = true
         const botMessage = chatList.value[chatList.value.length - 1]
 
         // fix: Add an image to use models/gemini-pro-vision, or switch your model to a text model.
-        if (model.value === MODEL_VISION && !imgData.value) {
-          model.value = MODEL_TEXT_ONLY
+        if (model.value === utils.MODEL_VISION && !imgData.value) {
+          model.value = utils.MODEL_TEXT_ONLY
         }
 
         utils.send({
@@ -103,7 +101,7 @@
             botMessage.message = text
             isFirstText = false
           } else {
-            botMessage.message += text;
+            botMessage.message += text
           }
           utils.scrollLastItemIntoView(listRef.value.$el)
         }, (err) => {
@@ -112,7 +110,7 @@
         }, () => {
           loading.value = false
           imgData.value = null
-          utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
+          updateCacheChatList()
         })
       }
 
@@ -122,7 +120,7 @@
         imageProcess.handleMediaFile(file, { longEdge: 600 }).then((res) => {
           console.log(res)
           imgData.value = res.data
-          chatList.value.push({ type: TYPES.USER, message: `<img src="${res.data}" />` })
+          chatList.value.push(generateItem(`<img src="${res.data}" />`, TYPES.USER))
           utils.scrollLastItemIntoView(listRef.value.$el)
         }).catch(console.error)
       }
@@ -133,11 +131,21 @@
           imgData.value = null
         }
         chatList.value.splice(index, 1)
+        updateCacheChatList()
+      }
+
+      function updateCacheChatList() {
+        console.log('updateCacheChatList ====')
+        utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
       }
 
       watch([model], () => {
         utils.setCache(utils.CACHE_CONFIG_KEY, { model: model.value })
       })
+
+      // watch(chatList, () => {
+      //   utils.setCache(utils.CACHE_HISTORY_KEY, chatList.value)
+      // }, { deep: true })
 
       onMounted(() => {
         console.log('mounted')
@@ -167,30 +175,36 @@
     }
   })
 
-  app.component('chat-item', {
-    props: ['item'],
-    computed: {
-      isBot() {
-        return this.item.type === TYPES.BOT
-      },
-      message() {
-        return utils.parseMarkdown(utils.formatNewline(this.item.message))
+  // eslint-disable-next-line vue/one-component-per-file
+  app.component('ChatItem', {
+    props: {
+      item: {
+        type: Object,
+        default: null,
       }
     },
-    methods: {
-      close() {
-        this.$emit('close')
+    setup({ item }) {
+      const message = computed(() => utils.parseMarkdown(utils.formatNewline(item.message)))
+
+      const args = computed(() => {
+        const isBot = item.type === TYPES.BOT
+        return {
+          icon: isBot ? 'mdi-google' : 'mdi-account-circle-outline',
+          color: isBot ? null : 'blue-grey',
+        }
+      })
+
+      return {
+        message,
+        args,
       }
     },
     template: `<v-list-item>
-        <v-alert icon="mdi-google" v-if="isBot" closable @click:close="close">
-          <section v-html="message"></section>
-        </v-alert>
-        <v-alert v-else color="blue-grey" icon="mdi-account-circle-outline" closable @click:close="close">
+        <v-alert v-bind="args" closable @click:close="$emit('close')">
           <section v-html="message"></section>
         </v-alert>
       </v-list-item>`
   })
 
   app.use(vuetify).mount('#app')
-})();
+})()

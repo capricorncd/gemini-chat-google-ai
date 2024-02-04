@@ -57,6 +57,12 @@ GOOGLE_API_KEY=ai_api_key_xxxxxxx
 uvicorn main:app --reload
 ```
 
+## Code Style
+
+```bash
+npx eslint . --fix --ext .js,.vue
+```
+
 ## Other
 
 https://vuejs.org/

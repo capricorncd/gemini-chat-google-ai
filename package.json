@@ -1,0 +1,16 @@
+{
+  "name": "gemini-chat-google-ai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "fix": "eslint . --fix --ext .js,.cjs,.vue"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.21.1"
+  }
+}
